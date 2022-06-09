@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <div style="position:relative;padding-top:56.25%;">
+        <iframe id="canvasIframe" src="" width="100%" height="100%"
+            style="position:absolute;top:0;left:0;width:100%;height:100%;" frameborder="0">
+        </iframe>
+    </div>
+
+    <script type="text/javascript" defer>
+        (() => {
+
+            let canvasAppName = "responsive screen samples";
+            let url = window.parent.Xrm.Page.context.getClientUrl();
+            let apiQuery = `${url}/api/data/v9.1/canvasapps?$select=appopenuri&$filter=displayname eq '${canvasAppName}'`;
+
+            fetch(apiQuery)
+                .then(response => response.json())
+                .then(canvasObj => {
+                    let canvasappopenuri = canvasObj.value[0]["appopenuri"];
+                    if (!canvasappopenuri) {
+                        return;
+                    }
+                    let pos = canvasappopenuri.indexOf("&hint=");
+
+                    if (pos !== -1) {
+                        let canvasUrl = canvasappopenuri.slice(0,pos);
+                        let iFrame = document.getElementById("canvasIframe");
+                        iFrame.src = canvasUrl;
+                    }
+                })
+                .catch(err => { throw new Error("unable to load canvasapp") });
+        })();
+
+    </script>
+</body>
+
+</html>
